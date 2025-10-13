@@ -1,0 +1,18 @@
+Line,Notes
+p62+/+ optn +/+,WT Controls
+p62-/- optn -/-,mutant genów p62 i optn koduj?cych bia?ka b?d?cymi receptorami selektywnej autofagii
+Lgals8A,galectin 8a - 10bp deletion
+Lgals8B,galectin 8b - 13bp deletion
+Lgals3A,galectin 3a - 4bp insertion
+Lgals3A,galectin 3a - 13bp deletion
+Lgals3B,galectin 3b - 5bp deletion
+CRY1A,cryptochrome circadian regulator 1a
+Cry1B,cryptochrome circadian regulator 1b
+DDX1,DEAD (Asp-Glu-Ala-Asp) box helicase 1 - 8bp deletion
+CH25h,cholesterol 25-hydroxylase - 5bp deletion
+Lgals8a;Lgals8b,Double mutant of lgals8a and lgals8b
+Lgals3a;Lgals3b,Double mutant of lgals3a and lgals3b
+CxCR4a/CxCR4b,"Construct consisting of: Cas9-2a-mCherry expressed in neutrophils (LyzC promoter). CRISPR1 targeting chemokine (C-X-C motif) receptor 4a (CXCR4a) & CRISPR2 targeting chemokine (C-X-C motif) receptor 4b (CXCR4b) - expressed globally, driven by U6 promoters; rnu6-7 for CXCR4a & rnu6-32 for CXCR4b. Construct expressed in mpx:GFP line that label neutrophils with GFP."
+CxCR1,"Construct consisting of: Cas9-2a-mCherry expressed in neutrophils (LyzC promoter). CRISPR targeting chemokine (C-X-C motif) receptor 1 (CXCR1) - expressed globally, driven by U6 promoter (rnu6-32). Heart muscle labeled with EGFP (CMLC2 - Cardiac Myosin Light Chain 2 promoter) for screening. Construct expressed in mpx:GFP line that label neutrophils with GFP."
+CxCR2,"Construct consisting of: Cas9-2a-mCherry expressed in neutrophils (LyzC promoter). CRISPR targeting chemokine (C-X-C motif) receptor 2 (CXCR2) - expressed globally, driven by U6 promoter (rnu6-32). Heart muscle labeled with EGFP (CMLC2 - Cardiac Myosin Light Chain 2 promoter) for screening. Construct expressed in mpx:GFP line that label neutrophils with GFP."
+Rubicon,"mutant genu rubcn - koduj?cego bia?ko Rubicon, które bierze udzia? w regulacji niekanonicznej formy autofagii - LAP"

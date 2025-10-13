@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Zebrafish Resources</title>
+<link rel="preconnect" href="https://cdn.datatables.net">
+<link rel="preconnect" href="https://code.jquery.com">
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css/jquery.dataTables.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
+<style>
+  :root { --gold:#D4AF37; --bg:#000; --text:#EEE; }
+  html, body { background: var(--bg); color: var(--text); margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 20px 16px 40px; }
+  h1 { color: var(--gold); font-weight: 800; letter-spacing: 0.3px; font-size: clamp(24px, 4vw, 36px); margin: 8px 0 10px; }
+  p.lead { color:#BEBEBE; margin-top:0; font-size: 15px; }
+  .tabs { display:flex; gap:10px; flex-wrap:wrap; margin: 16px 0; }
+  .tabbtn { background: transparent; border: 1.6px solid var(--gold); color: var(--gold); padding: 10px 14px; border-radius: 999px; cursor:pointer; font-weight:700; }
+  .tabbtn.active { background: var(--gold); color: #000; }
+  .panel { display:none; }
+  .panel.active { display:block; }
+  .subtabs { display:flex; gap:10px; margin: 10px 0 8px; flex-wrap:wrap; }
+  .subbtn { background: transparent; border: 1.3px solid #888; color:#ddd; padding:8px 12px; border-radius: 999px; cursor:pointer; }
+  .subbtn.active { background:#1a1a1a; color:var(--gold); border-color:var(--gold); }
+  /* DataTables styling overrides */
+  table.dataTable { background:#0a0a0a; border-radius:12px; overflow:hidden; width:100%; }
+  table.dataTable thead th { color: var(--gold); }
+  table.dataTable tbody td { color:#EDEDED; }
+  .dt-container .dt-input { background:#111; border:1px solid #333; color:#EEE; }
+  .dt-container .dt-paging { display:none; } /* hide pagination controls explicitly */
+  .scroll-wrap { max-height: 70vh; } /* extra safety wrapper */
+  footer { color:#777; margin-top: 18px; font-size: 13px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Zebrafish Resources</h1>
+  <p class="lead">Scrollable tables. Only two columns are shown (first two columns in each CSV).</p>
+
+  <div class="tabs">
+    <button class="tabbtn active" data-tab="crisprs">CRISPRs</button>
+    <button class="tabbtn" data-tab="transgenics">Transgenics</button>
+    <button class="tabbtn" data-tab="mutants">Mutant Lines</button>
+  </div>
+
+  <!-- CRISPRs -->
+  <section id="crisprs" class="panel active">
+    <div class="scroll-wrap">
+      <table id="crispr-table" class="display nowrap" style="width:100%"></table>
+    </div>
+  </section>
+
+  <!-- Transgenics -->
+  <section id="transgenics" class="panel">
+    <div class="subtabs">
+      <button class="subbtn active" data-sub="tg-single">Transgenic</button>
+      <button class="subbtn" data-sub="tg-double">Double Transgenic</button>
+    </div>
+    <div id="tg-single" class="subpanel active">
+      <div class="scroll-wrap">
+        <table id="tg-single-table" class="display nowrap" style="width:100%"></table>
+      </div>
+    </div>
+    <div id="tg-double" class="subpanel" style="display:none">
+      <div class="scroll-wrap">
+        <table id="tg-double-table" class="display nowrap" style="width:100%"></table>
+      </div>
+    </div>
+  </section>
+
+  <!-- Mutant Lines -->
+  <section id="mutants" class="panel">
+    <div class="scroll-wrap">
+      <table id="mutants-table" class="display nowrap" style="width:100%"></table>
+    </div>
+  </section>
+
+  <footer>Tip: put your most useful fields in the first two columns of each CSV.</footer>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+<script>
+// Tab logic
+document.querySelectorAll('.tabbtn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tabbtn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const id = btn.dataset.tab;
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    if (window.crisprDT) window.crisprDT.columns.adjust().responsive.recalc();
+    if (window.tgSingleDT) window.tgSingleDT.columns.adjust().responsive.recalc();
+    if (window.tgDoubleDT) window.tgDoubleDT.columns.adjust().responsive.recalc();
+    if (window.mutantsDT) window.mutantsDT.columns.adjust().responsive.recalc();
+  });
+});
+
+// Subtabs
+document.querySelectorAll('.subbtn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.subbtn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const sub = btn.dataset.sub;
+    document.querySelectorAll('#transgenics .subpanel').forEach(p => p.style.display='none');
+    document.getElementById(sub).style.display='block';
+    if (sub === 'tg-single' && window.tgSingleDT) window.tgSingleDT.columns.adjust().responsive.recalc();
+    if (sub === 'tg-double' && window.tgDoubleDT) window.tgDoubleDT.columns.adjust().responsive.recalc();
+  });
+});
+
+function loadCSVtoTable(csvPath, tableId, orderCol=0) {
+  Papa.parse(csvPath, {
+    download: true,
+    header: true,
+    skipEmptyLines: true,
+    complete: (results) => {
+      const data = results.data || [];
+      // Derive columns from headers, but only keep the first TWO
+      const allKeys = Object.keys(data[0] || {});
+      const keys2 = (allKeys.length >= 2) ? allKeys.slice(0, 2) : (allKeys.concat([""])).slice(0,2);
+      const columns = keys2.map(k => ({ title: k, data: k }));
+
+      const dt = new DataTable(tableId, {
+        data,
+        columns,
+        responsive: true,
+        paging: false,
+        info: false,
+        searching: true,
+        order: [[orderCol, 'asc']],
+        scrollY: '60vh',
+        scrollCollapse: true
+      });
+      return dt;
+    }
+  });
+}
+
+// Initialize tables
+window.crisprDT   = loadCSVtoTable('crisprs.csv', '#crispr-table', 0);
+window.tgSingleDT = loadCSVtoTable('transgenic.csv', '#tg-single-table', 0);
+window.tgDoubleDT = loadCSVtoTable('double_transgenic.csv', '#tg-double-table', 0);
+window.mutantsDT  = loadCSVtoTable('mutants.csv', '#mutants-table', 0);
+</script>
+</body>
+</html>
