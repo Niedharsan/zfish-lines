@@ -4,8 +4,6 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Zebrafish Resources</title>
-<link rel="preconnect" href="https://cdn.datatables.net">
-<link rel="preconnect" href="https://code.jquery.com">
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css/jquery.dataTables.min.css">
 <style>
   :root { --gold:#D4AF37; --bg:#000; --text:#EEE; }
@@ -21,11 +19,10 @@
   .badge { background:#1a1a1a; color:var(--gold); border:1px solid var(--gold); padding:2px 8px; border-radius:999px; font-size:12px; }
   .panel { display:none; }
   .panel.active { display:block; }
-  .dt-container .dt-search, .dt-container .dt-length { display:none !important; }
   table.dataTable { background:#0a0a0a; border-radius:12px; overflow:hidden; width:100%; table-layout: fixed; }
   table.dataTable thead th { color: var(--gold); white-space: normal !important; }
   table.dataTable tbody td { color:#EDEDED; white-space: normal !important; word-wrap: break-word; }
-  .dt-container .dt-paging { display:none; }
+  .dt-container .dt-search, .dt-container .dt-length, .dt-container .dt-paging { display:none !important; }
   .scroll-wrap { max-height: 70vh; }
   footer { color:#777; margin-top: 18px; font-size: 13px; }
 </style>
@@ -33,10 +30,10 @@
 <body>
 <div class="wrap">
   <h1>Zebrafish Resources</h1>
-  <p class="lead">Global search filters all tabs. Two-column, scrollable tables. Transgenics merged into one list.</p>
+  <p class="lead">One search box filters <em>all</em> tabs. Two-column, scrollable tables. Transgenics merged into one list.</p>
 
   <div class="searchbar">
-    <input id="globalSearch" type="search" placeholder="Search all (CRISPRs, Transgenics, Mutants)..." aria-label="Search all tables">
+    <input id="globalSearch" type="search" placeholder="Search all..." aria-label="Search all tables">
   </div>
 
   <div class="tabs">
@@ -46,29 +43,34 @@
   </div>
 
   <section id="crisprs" class="panel active">
-    <div class="scroll-wrap">
-      <table id="crispr-table" class="display" style="width:100%"></table>
-    </div>
+    <div class="scroll-wrap"><table id="crispr-table" class="display" style="width:100%"></table></div>
   </section>
 
   <section id="transgenics" class="panel">
-    <div class="scroll-wrap">
-      <table id="tg-table" class="display" style="width:100%"></table>
-    </div>
+    <div class="scroll-wrap"><table id="tg-table" class="display" style="width:100%"></table></div>
   </section>
 
   <section id="mutants" class="panel">
-    <div class="scroll-wrap">
-      <table id="mutants-table" class="display" style="width:100%"></table>
-    </div>
+    <div class="scroll-wrap"><table id="mutants-table" class="display" style="width:100%"></table></div>
   </section>
 
-  <footer>Tip: The first two columns in each CSV are shown as <em>Name</em> and <em>Details</em>. No paging; just scroll.</footer>
+  <footer>Only the first two columns in each CSV are shown as Name/Details.</footer>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 <script>
+// Persistent global filter that runs for ALL tables
+let GLOBAL_TERM = '';
+$.fn.dataTable.ext.search.push(function(settings, data) {
+  if (!GLOBAL_TERM) return true;
+  const text = (data || []).join(' ').toLowerCase();
+  return text.indexOf(GLOBAL_TERM) !== -1;
+});
+
+const tables = {};
+
 function toRows(data) {
   const rows = [];
   for (const obj of data) {
@@ -80,8 +82,9 @@ function toRows(data) {
   }
   return rows;
 }
-function build2colTable(sel, rows) {
-  return new DataTable(sel, {
+
+function build2col(sel, rows) {
+  const dt = new DataTable(sel, {
     data: rows,
     columns: [
       { title: 'Name', data: 'Name', width: '35%' },
@@ -91,20 +94,28 @@ function build2colTable(sel, rows) {
     autoWidth: false,
     paging: false,
     info: false,
-    searching: true,
+    searching: false,
     order: [[0, 'asc']],
     scrollY: '60vh',
     scrollCollapse: true
   });
+  // Apply current global term immediately after init
+  dt.draw();
+  return dt;
 }
-window.tables = {};
+
 function updateBadges() {
   const count = (dt) => dt ? dt.rows({ filter: 'applied' }).count() : 0;
-  document.getElementById('badge-crisprs').textContent  = count(window.tables.crisprDT);
-  document.getElementById('badge-tg').textContent       = count(window.tables.tgDT);
-  document.getElementById('badge-mutants').textContent  = count(window.tables.mutantsDT);
+  document.getElementById('badge-crisprs').textContent = count(tables.crispr);
+  document.getElementById('badge-tg').textContent = count(tables.tg);
+  document.getElementById('badge-mutants').textContent = count(tables.mutants);
 }
-function relayout(){ Object.values(window.tables).forEach(dt => { if(dt){ dt.columns.adjust(); dt.draw(false);} }); }
+
+function relayout() {
+  Object.values(tables).forEach(dt => { if (dt) { dt.columns.adjust(); dt.draw(false); }});
+}
+
+// Tabs
 document.querySelectorAll('.tabbtn').forEach(btn => {
   btn.addEventListener('click', () => {
     document.querySelectorAll('.tabbtn').forEach(b => b.classList.remove('active'));
@@ -115,29 +126,27 @@ document.querySelectorAll('.tabbtn').forEach(btn => {
     relayout();
   });
 });
-const searchInput = document.getElementById('globalSearch');
-searchInput.addEventListener('input', (e) => {
-  const term = e.target.value;
-  Object.values(window.tables).forEach(dt => { if (dt) dt.search(term).draw(); });
+
+// Global search handler
+document.getElementById('globalSearch').addEventListener('input', (e) => {
+  GLOBAL_TERM = (e.target.value || '').toLowerCase();
+  Object.values(tables).forEach(dt => { if (dt) dt.draw(); });
   updateBadges();
 });
-// Load PapaParse and CSVs
-(function loadPapa(cb){
-  const s = document.createElement('script');
-  s.src = 'https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js';
-  s.onload = cb;
-  document.head.appendChild(s);
-})(() => {
-  Papa.parse('crisprs.csv', { download:true, header:true, skipEmptyLines:true, complete: (res)=>{
-    window.tables.crisprDT = build2colTable('#crispr-table', toRows(res.data||[])); updateBadges();
-  }});
-  Papa.parse('transgenics.csv', { download:true, header:true, skipEmptyLines:true, complete: (res)=>{
-    window.tables.tgDT = build2colTable('#tg-table', toRows(res.data||[])); updateBadges();
-  }});
-  Papa.parse('mutants.csv', { download:true, header:true, skipEmptyLines:true, complete: (res)=>{
-    window.tables.mutantsDT = build2colTable('#mutants-table', toRows(res.data||[])); updateBadges();
-  }});
-});
+
+// Load CSVs
+Papa.parse('crisprs.csv', { download:true, header:true, skipEmptyLines:true, complete: (res) => {
+  tables.crispr = build2col('#crispr-table', toRows(res.data || []));
+  updateBadges();
+}});
+Papa.parse('transgenics.csv', { download:true, header:true, skipEmptyLines:true, complete: (res) => {
+  tables.tg = build2col('#tg-table', toRows(res.data || []));
+  updateBadges();
+}});
+Papa.parse('mutants.csv', { download:true, header:true, skipEmptyLines:true, complete: (res) => {
+  tables.mutants = build2col('#mutants-table', toRows(res.data || []));
+  updateBadges();
+}});
 </script>
 </body>
 </html>
