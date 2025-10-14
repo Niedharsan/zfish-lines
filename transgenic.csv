@@ -1,7 +1,7 @@
-Line,Notes,Type
-MPX:GFP,Neutrofile wyznakowane bia?kiem GFP (zielone),single
-CMV:GFP-Lc3,bia?ko Lc3 - marker autofagii- wyznakowane na zielono,single
-Olig2:GFP,Oligodendrocyty wyznakowane bia?kiem zielonej fluorescencji GFP,single
+Line,Notes
+MPX:GFP,Neutrofile wyznakowane bia?kiem GFP (zielone)
+CMV:GFP-Lc3,bia?ko Lc3 - marker autofagii- wyznakowane na zielono
+Olig2:GFP,Oligodendrocyty wyznakowane bia?kiem zielonej fluorescencji GFP
 BRN3C:GFP,Ekspresja GFP w komórkach rz?skowych (ang. cilia)
 NeuroD:GFP,Ekspresja eGFP w ró?nicuj?cych si? neuronach Centralnego Uk?adu Nerwowego
 TNF-a:GFP,Komórki pozytywne pod k?tem tnfa wyznakowane s? na zielono (GFP)
@@ -22,10 +22,11 @@ Wet-Aqua pink Casper,wyznakowane na ró?owo ryby towarzysze w tle Casper np. do 
 GCaMP,sonda wapniowa (green) w neuronach
 l-fabp:DBP-EGFP,"bia?ko wi???ce witamin? D (w osoczu) po??czone z bia?kiem wzmocnionej zielonej fluorescencji (EGFP), fenotyp - zielone osocze"
 MPX:GFP - Mpeg:mCherry,
-Kdrl:mTurquoise - Mpeg:mCherry,?,double
+Kdrl:mTurquoise - Mpeg:mCherry
 Myd88 +/- CMV:GFP-Lc3,mutant genu myd88- bia?ko odpowiedzilne za przekazywanie sygna?u pochodz?cego z receptorów rozpoznaj?cych PAMP np. TLR WA?ZE- ryby -/- mog? wykazywa? nisk? odporno?? i przez to wy?sz? ?miertelno?? w backgoundzie linii reporterowej autofagii
 LysC:CFP-NTR MMP9+,"Neutrofile wyznakowane bia?kiem CFP (cyan-niebieskie) oraz neutrofile dojrza?e (komórki mmp9+) wyznakowane bia?kiem Citrine (?ó?te-nab?onek p?etwy ogonowej i dystanlna cz??? jelit, dodatkowo widoczny jest kropkowany wzór wzd?u? g?owy, ?ó?tka i w tkance hematopoetycznej (CHT)"
 Empty Vector,Cas9-2a-mCherry expressed in neutrophils (LyzC promoter). Construct expressed in mpx:GFP line that label neutrophils with GFP.
 
 Kdrl:mCherry - l-fabp:DBP-eGFP,"Komórki ?ródb?onka naczy? krwiono?nych wyznakowane bia?kiem czerwonej fluorescencji mCherry, bia?ko wi???ce witamin? D (w osoczu) po??czone z bia?kiem wzmocnionej zielonej fluorescencji (EGFP), fenotyp - zielone osocze"
+
 
