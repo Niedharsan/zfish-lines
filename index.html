@@ -147,6 +147,51 @@ Papa.parse('mutants.csv', { download:true, header:true, skipEmptyLines:true, com
   tables.mutants = build2col('#mutants-table', toRows(res.data || []));
   updateBadges();
 }});
+
+  <script>
+/* ---- FORCE GLOBAL SEARCH ACROSS ALL TABLES ---- */
+(function() {
+  // Keep one term for the whole page
+  let GLOBAL_TERM = '';
+
+  // Register your tables here after they are created
+  // (If you already have vars like window.tables.crisprDT etc., reuse them.)
+  const ALL_TABLES = [];
+
+  function register(dt) {
+    if (dt) {
+      ALL_TABLES.push(dt);
+      // Apply current filter immediately (covers case user typed before init)
+      if (GLOBAL_TERM) dt.search(GLOBAL_TERM).draw();
+    }
+  }
+
+  // Hook up the input once
+  const input = document.getElementById('globalSearch');
+  if (input) {
+    input.addEventListener('input', function(e) {
+      GLOBAL_TERM = (e.target.value || '');
+      ALL_TABLES.forEach(dt => dt && dt.search(GLOBAL_TERM).draw());
+    });
+  }
+
+  // Re-apply search when tabs change (ensures hidden tables pick it up)
+  document.querySelectorAll('.tabbtn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      ALL_TABLES.forEach(dt => dt && dt.search(GLOBAL_TERM).draw());
+    });
+  });
+
+  // EXAMPLE: after you create each table, call register(...)
+  // tables.crisprDT  = new DataTable('#crispr-table',  {...}); register(tables.crisprDT);
+  // tables.tgDT      = new DataTable('#tg-table',      {...}); register(tables.tgDT);
+  // tables.mutantsDT = new DataTable('#mutants-table', {...}); register(tables.mutantsDT);
+
+  // If you initialize tables inside Papa.parse callbacks,
+  // call register(dt) right after each DataTable(...) line.
+})();
+</script>
+
 </script>
 </body>
 </html>
