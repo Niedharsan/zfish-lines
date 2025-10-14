@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Zebrafish Resources</title>
+<link rel="preconnect" href="https://cdn.datatables.net">
+<link rel="preconnect" href="https://code.jquery.com">
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css/jquery.dataTables.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
+<style>
+  :root { --gold:#D4AF37; --bg:#000; --text:#EEE; }
+  html, body { background: var(--bg); color: var(--text); margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 20px 16px 40px; }
+  h1 { color: var(--gold); font-weight: 800; letter-spacing: 0.3px; font-size: clamp(24px, 4vw, 36px); margin: 8px 0 6px; }
+  p.lead { color:#BEBEBE; margin:6px 0 10px; font-size: 15px; }
+  .searchbar { display:flex; gap:10px; margin: 10px 0 16px; align-items:center; }
+  .searchbar input { flex:1; background:#111; border:1.5px solid #333; color:#EEE; padding:10px 12px; border-radius:10px; font-size:16px; }
+  .tabs { display:flex; gap:10px; flex-wrap:wrap; margin: 10px 0 12px; }
+  .tabbtn { background: transparent; border: 1.6px solid var(--gold); color: var(--gold); padding: 10px 14px; border-radius: 999px; cursor:pointer; font-weight:700; display:flex; gap:8px; align-items:center; }
+  .tabbtn.active { background: var(--gold); color: #000; }
+  .badge { background:#1a1a1a; color:var(--gold); border:1px solid var(--gold); padding:2px 8px; border-radius:999px; font-size:12px; }
+  .panel { display:none; }
+  .panel.active { display:block; }
+  .subtabs { display:flex; gap:10px; margin: 10px 0 8px; flex-wrap:wrap; }
+  .subbtn { background: transparent; border: 1.3px solid #888; color:#ddd; padding:8px 12px; border-radius: 999px; cursor:pointer; display:flex; gap:8px; align-items:center; }
+  .subbtn.active { background:#1a1a1a; color:var(--gold); border-color:var(--gold); }
+  .dt-container .dt-search, .dt-container .dt-length { display:none !important; }
+  table.dataTable { background:#0a0a0a; border-radius:12px; overflow:hidden; width:100%; }
+  table.dataTable thead th { color: var(--gold); white-space: normal !important; }
+  table.dataTable tbody td { color:#EDEDED; white-space: normal !important; }
+  .dt-container .dt-paging { display:none; }
+  .scroll-wrap { max-height: 70vh; }
+  footer { color:#777; margin-top: 18px; font-size: 13px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Zebrafish Resources</h1>
+  <p class="lead">Global search across all tabs. Two-column, scrollable tables. Transgenics split by a hidden <em>Type</em> field.</p>
+
+  <div class="searchbar">
+    <input id="globalSearch" type="search" placeholder="Search all (CRISPRs, Transgenics, Mutants)..." aria-label="Search all tables">
+  </div>
+
+  <div class="tabs">
+    <button class="tabbtn active" data-tab="crisprs">CRISPRs <span class="badge" id="badge-crisprs">0</span></button>
+    <button class="tabbtn" data-tab="transgenics">Transgenics <span class="badge" id="badge-tg">0</span></button>
+    <button class="tabbtn" data-tab="mutants">Mutant Lines <span class="badge" id="badge-mutants">0</span></button>
+  </div>
+
+  <section id="crisprs" class="panel active">
+    <div class="scroll-wrap">
+      <table id="crispr-table" class="display" style="width:100%"></table>
+    </div>
+  </section>
+
+  <section id="transgenics" class="panel">
+    <div class="subtabs">
+      <button class="subbtn active" data-sub="tg-single">Transgenic <span class="badge" id="badge-tg-single">0</span></button>
+      <button class="subbtn" data-sub="tg-double">Double Transgenic <span class="badge" id="badge-tg-double">0</span></button>
+    </div>
+    <div id="tg-single" class="subpanel active">
+      <div class="scroll-wrap">
+        <table id="tg-single-table" class="display" style="width:100%"></table>
+      </div>
+    </div>
+    <div id="tg-double" class="subpanel" style="display:none">
+      <div class="scroll-wrap">
+        <table id="tg-double-table" class="display" style="width:100%"></table>
+      </div>
+    </div>
+  </section>
+
+  <section id="mutants" class="panel">
+    <div class="scroll-wrap">
+      <table id="mutants-table" class="display" style="width:100%"></table>
+    </div>
+  </section>
+
+  <footer>Transgenics CSV can use Type values like "Transgenic", "Single", or blank for single; any value containing "double" is treated as Double.</footer>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+<script>
+window.tables = {};
+
+function relayout() {
+  Object.values(window.tables).forEach(dt => { if (dt) { dt.columns.adjust(); dt.draw(false); }});
+}
+
+document.querySelectorAll('.tabbtn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tabbtn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const id = btn.dataset.tab;
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    relayout();
+  });
+});
+
+document.querySelectorAll('.subbtn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.subbtn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const sub = btn.dataset.sub;
+    document.querySelectorAll('#transgenics .subpanel').forEach(p => p.style.display='none');
+    document.getElementById(sub).style.display='block';
+    relayout();
+  });
+});
+
+function toRows(data) {
+  const rows = [];
+  for (const obj of data) {
+    const keys = Object.keys(obj);
+    if (!keys.length) continue;
+    const lineKey  = keys[0];
+    const notesKey = keys.length > 1 ? keys[1] : keys[0];
+    const typeKey  = keys.find(k => k.toLowerCase().trim() === 'type');
+    rows.push({
+      Line:  String(obj[lineKey]  ?? '').trim(),
+      Notes: String(obj[notesKey] ?? '').trim(),
+      Type:  typeKey ? String(obj[typeKey] ?? '').trim() : ''
+    });
+  }
+  return rows;
+}
+
+function build2colTable(tableId, rows) {
+  return new DataTable(tableId, {
+    data: rows,
+    columns: [
+      { title: 'Line', data: 'Line', width: '35%' },
+      { title: 'Notes', data: 'Notes', width: '65%' }
+    ],
+    responsive: false,
+    autoWidth: false,
+    paging: false,
+    info: false,
+    searching: true,
+    order: [[0, 'asc']],
+    scrollY: '60vh',
+    scrollCollapse: true
+  });
+}
+
+function updateBadges() {
+  const count = (dt) => dt ? dt.rows({ filter: 'applied' }).count() : 0;
+  const tgSingle = count(window.tables.tgSingleDT);
+  const tgDouble = count(window.tables.tgDoubleDT);
+  document.getElementById('badge-crisprs').textContent = count(window.tables.crisprDT);
+  document.getElementById('badge-tg-single').textContent = tgSingle;
+  document.getElementById('badge-tg-double').textContent = tgDouble;
+  document.getElementById('badge-tg').textContent = tgSingle + tgDouble;
+  document.getElementById('badge-mutants').textContent = count(window.tables.mutantsDT);
+}
+
+document.getElementById('globalSearch').addEventListener('input', (e) => {
+  const term = e.target.value;
+  Object.values(window.tables).forEach(dt => { if (dt) dt.search(term).draw(); });
+  updateBadges();
+});
+
+Papa.parse('crisprs.csv', {
+  download: true, header: true, skipEmptyLines: true,
+  complete: (results) => {
+    const rows = toRows(results.data);
+    window.tables.crisprDT = build2colTable('#crispr-table', rows);
+    updateBadges();
+  }
+});
+
+Papa.parse('transgenics.csv', {
+  download: true, header: true, skipEmptyLines: true,
+  complete: (results) => {
+    const rows = toRows(results.data);
+    const singles = rows.filter(r => !(r.Type || '').toLowerCase().includes('double')); // default to single
+    const doubles = rows.filter(r => (r.Type || '').toLowerCase().includes('double'));
+    window.tables.tgSingleDT = build2colTable('#tg-single-table', singles);
+    window.tables.tgDoubleDT = build2colTable('#tg-double-table', doubles);
+    updateBadges();
+  }
+});
+
+Papa.parse('mutants.csv', {
+  download: true, header: true, skipEmptyLines: true,
+  complete: (results) => {
+    const rows = toRows(results.data);
+    window.tables.mutantsDT = build2colTable('#mutants-table', rows);
+    updateBadges();
+  }
+});
+</script>
+</body>
+</html>
