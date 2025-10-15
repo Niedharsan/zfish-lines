@@ -1,29 +1,32 @@
 Name,Details
-MPX:GFP,Neutrofile wyznakowane bia?kiem GFP (zielone)
-CMV:GFP-Lc3,bia?ko Lc3 - marker autofagii- wyznakowane na zielono
-Olig2:GFP,Oligodendrocyty wyznakowane bia?kiem zielonej fluorescencji GFP
-BRN3C:GFP,Ekspresja GFP w komórkach rz?skowych (ang. cilia)
-NeuroD:GFP,Ekspresja eGFP w ró?nicuj?cych si? neuronach Centralnego Uk?adu Nerwowego
-TNF-a:GFP,Komórki pozytywne pod k?tem tnfa wyznakowane s? na zielono (GFP)
-GFAP:GFP,Astrocyty wyznakowane bia?kiem zielonej fluorescencji GFP
-Fli1a:GFP,Komórki ?ródb?onka naczy? krwiono?nych wyznakowane bia?kiem zielonej fluorescencji GFP
-IL1B:GFP,Komórki pozytywne pod k?tem il1b wyznakowane s? na zielono (GFP)
-Mpeg:mCherry,Makrofagi wyznakowane bia?kiem mCherry (czerwone) - b?onowe
-b-actin:mCherry-Lc3,
-Kdrl:mCherry,ekspresje RFP (Red Fluorescent Protein) w komórkach ?ródb?onka naczy? krwiono?nych (b?ony komórkowe) 
-Kdrl:mTurquoise,ekspresje mTurquoise w komórkach ?ródb?onka naczy? krwiono?nych
-MNX1:RFP,ekspresje RFP (Red Fluorescent Protein) w motoneuronach
-LysC:CFP-NTR MMP9-,Neutrofile wyznakowane bia?kiem CFP (cyan-niebieskie)
-Lyve1:dsRed,?ródb?onek naczy? limfatycznych wybarwiny RFP
-Myd88 +/-,mutant genu myd88- bia?ko odpowiedzialne za przekazywanie sygna?u pochodz?cego z receptorów rozpoznaj?cych PAMP np. TLR WA?NE- ryby -/- mog? wykazywa? nisk? odporno?? i przez to wy?sz? ?miertelno??
-Xla.Eef1a1:mlsEGFP,ekspresja eGFP w mitochondriach
-Wet-Aqua pink WT,wyznakowane na ró?owo ryby towarzysze w tle dzikim (paskowane) np do genotypowania
-Wet-Aqua pink Casper,wyznakowane na ró?owo ryby towarzysze w tle Casper np. do genotypowania
-GCaMP,sonda wapniowa (green) w neuronach
-l-fabp:DBP-EGFP,"bia?ko wi???ce witamin? D (w osoczu) po??czone z bia?kiem wzmocnionej zielonej fluorescencji (EGFP), fenotyp - zielone osocze"
-MPX:GFP - Mpeg:mCherry,
-Kdrl:mTurquoise - Mpeg:mCherry,
-Myd88 +/- CMV:GFP-Lc3,mutant genu myd88- bia?ko odpowiedzilne za przekazywanie sygna?u pochodz?cego z receptorów rozpoznaj?cych PAMP np. TLR WA?ZE- ryby -/- mog? wykazywa? nisk? odporno?? i przez to wy?sz? ?miertelno?? w backgoundzie linii reporterowej autofagii
-LysC:CFP-NTR MMP9+,"Neutrofile wyznakowane bia?kiem CFP (cyan-niebieskie) oraz neutrofile dojrza?e (komórki mmp9+) wyznakowane bia?kiem Citrine (?ó?te-nab?onek p?etwy ogonowej i dystanlna cz??? jelit, dodatkowo widoczny jest kropkowany wzór wzd?u? g?owy, ?ó?tka i w tkance hematopoetycznej (CHT)"
-Empty Vector,Cas9-2a-mCherry expressed in neutrophils (LyzC promoter). Construct expressed in mpx:GFP line that label neutrophils with GFP.
-Kdrl:mCherry - l-fabp:DBP-eGFP,"Komórki ?ródb?onka naczy? krwiono?nych wyznakowane bia?kiem czerwonej fluorescencji mCherry, bia?ko wi???ce witamin? D (w osoczu) po??czone z bia?kiem wzmocnionej zielonej fluorescencji (EGFP), fenotyp - zielone osocze"
+MPX:GFP,Neutrophils labeled with green fluorescent protein (GFP).
+CMV:GFP-Lc3,"Lc3 protein,  an autophagy marker,  labeled with green fluorescent protein (GFP)."
+Olig2:GFP,Oligodendrocytes labeled with green fluorescent protein (GFP).
+BRN3C:GFP,"GFP expression in ciliated cells, driven by the brn3c promoter."
+NeuroD:GFP,Enhanced GFP (eGFP) expression in differentiating neurons of the central nervous system.
+TNF-a:GFP,Cells expressing TNF-alpha labeled with green fluorescent protein (GFP).
+GFAP:GFP,Astrocytes labeled with green fluorescent protein (GFP).
+Fli1a:GFP,Vascular endothelial cells labeled with green fluorescent protein (GFP).
+IL1B:GFP,Cells expressing IL-1 beta labeled with green fluorescent protein (GFP).
+Mpeg:mCherry,Macrophages labeled with membrane-bound mCherry (red fluorescent protein).
+b-actin:mCherry-Lc3,"Lc3 protein,  an autophagy marker, fused to mCherry (red fluorescent protein) under the beta-actin promoter."
+Kdrl:mCherry,Membrane-bound mCherry (red fluorescent protein) expression in vascular endothelial cells.
+Kdrl:mTurquoise,mTurquoise expression in vascular endothelial cells.
+MNX1:RFP,Red fluorescent protein (RFP) expression in motor neurons
+LysC:CFP-NTR MMP9-,Neutrophils labeled with cyan fluorescent protein (CFP) and nitroreductase (NTR) for ablation studies.  MMP9-mCirtine negative.
+Lyve1:dsRed,Lymphatic endothelial cells labeled with dsRed (red fluorescent protein).
+Myd88 +/-,Heterozygous myd88 mutant; MyD88 protein is involved in signaling from PAMP-recognizing receptors (e.g. TLRs)
+Xla.Eef1a1:mlsEGFP,Enhanced GFP (eGFP) expression targeted to mitochondria.
+Wet-Aqua pink WT,"Pink-labeled companion fish in a wild-type (striped) background, used for genotyping purposes."
+Wet-Aqua pink Casper,"Pink-labeled companion fish in a Casper (transparent) background, used for genotyping purposes."
+GCaMP,Calcium sensor (GCaMPG5  green) expressed in neurons
+l-fabp:DBP-EGFP,"Vitamin D-binding protein in plasma fused to enhanced green fluorescent protein (EGFP), resulting in green plasma phenotype."
+myl7:EGFP,green fluorescent protein (EGFP) expression in cardiac muscle cells (cardiomyocytes).
+myl7:mRFP,Red fluorescent protein (mRFP) expression in cardiac muscle cells (cardiomyocytes).
+MPX:GFP - Mpeg:mCherry,Neutrophils labeled with GFP and macrophages labeled with mCherry (red fluorescent protein).
+Kdrl:mTurquoise - Mpeg:mCherry,Vascular endothelial cells labeled with mTurquoise and macrophages labeled with mCherry (red fluorescent protein).
+Myd88 +/- CMV:GFP-Lc3,Heterozygous myd88 mutant in a CMV:GFP-Lc3 background; Lc3 protein (autophagy marker) labeled with GFP
+LysC:CFP-NTR MMP9+,"Neutrophils labeled with CFP (cyan) and nitroreductase (NTR) for ablation studies, and mature neutrophils (MMP9-positive) labeled with Citrine (yellow) in the tail fin epithelium, distal intestine, and a dotted pattern along the head, yolk, and caudal hematopoietic tissue (CHT)."
+Empty Vector,"Cas9 and mCherry (via 2A peptide) expressed in neutrophils under the LyzC promoter, combined with the mpx:GFP line labeling neutrophils with GFP."
+Kdrl:mCherry - l-fabp:DBP-eGFP,"Vascular endothelial cells labeled with mCherry (red fluorescent protein), and vitamin D-binding protein in plasma fused to enhanced green fluorescent protein (EGFP), resulting in green plasma phenotype."
+kdrl:mCherry-CAAX - cd41:GFP,"Membrane-bound mCherry in vascular endothelial cells, hematopoietic and progenitor cells with low green fluorescence, and thrombocytes with high green fluorescence (EGFP)."
