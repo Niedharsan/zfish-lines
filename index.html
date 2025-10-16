@@ -62,6 +62,13 @@
     </div>
   </section>
 
+  <!-- Global results panel (auto-shown while searching) -->
+  <section id="global" class="panel">
+    <div class="scroll-wrap">
+      <table id="global-table" class="display" style="width:100%"></table>
+    </div>
+  </section>
+
 </div>
 
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
@@ -78,6 +85,7 @@ function toRows(data) {
   }
   return rows;
 }
+
 function build2colTable(sel, rows) {
   return new DataTable(sel, {
     data: rows,
@@ -96,30 +104,82 @@ function build2colTable(sel, rows) {
     scrollCollapse: true
   });
 }
+
+// --- GLOBAL SEARCH HELPERS ---
 window.tables = {};
+let lastActive = 'crisprs';
+
 function updateBadges() {
   const count = (dt) => dt ? dt.rows({ filter: 'applied' }).count() : 0;
   document.getElementById('badge-crisprs').textContent  = count(window.tables.crisprDT);
   document.getElementById('badge-tg').textContent       = count(window.tables.tgDT);
   document.getElementById('badge-mutants').textContent  = count(window.tables.mutantsDT);
 }
-function relayout(){ Object.values(window.tables).forEach(dt => { if(dt){ dt.columns.adjust(); dt.draw(false);} }); }
+
+function relayout(){ Object.values(window.tables).forEach(dt => { if(dt && dt.columns){ dt.columns.adjust(); dt.draw(false);} }); }
+
+function ensureGlobalDT() {
+  if (!window.tables.globalDT) {
+    window.tables.globalDT = build2colTable('#global-table', []);
+  }
+}
+
+function showPanel(id) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  relayout();
+}
+
+// Tabs: remember last active real tab
 document.querySelectorAll('.tabbtn').forEach(btn => {
   btn.addEventListener('click', () => {
     document.querySelectorAll('.tabbtn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     const id = btn.dataset.tab;
-    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
-    relayout();
+    lastActive = id;
+    showPanel(id);
   });
 });
+
+// Global search behavior
 const searchInput = document.getElementById('globalSearch');
 searchInput.addEventListener('input', (e) => {
-  const term = e.target.value;
-  Object.values(window.tables).forEach(dt => { if (dt) dt.search(term).draw(); });
+  const term = e.target.value.trim();
+  const tableKeys = ['crisprDT','tgDT','mutantsDT'];
+
+  // Apply the search to real tables so badges stay correct
+  tableKeys.forEach(k => { const dt = window.tables[k]; if (dt) dt.search(term).draw(); });
   updateBadges();
+
+  if (term) {
+    ensureGlobalDT();
+
+    const rows = [];
+    if (window.tables.crisprDT) {
+      window.tables.crisprDT.rows({ search: 'applied' }).data().toArray()
+        .forEach(r => rows.push({ Name: r.Name, Details: r.Details + ' <span class="badge">CRISPRs</span>' }));
+    }
+    if (window.tables.tgDT) {
+      window.tables.tgDT.rows({ search: 'applied' }).data().toArray()
+        .forEach(r => rows.push({ Name: r.Name, Details: r.Details + ' <span class="badge">Transgenics</span>' }));
+    }
+    if (window.tables.mutantsDT) {
+      window.tables.mutantsDT.rows({ search: 'applied' }).data().toArray()
+        .forEach(r => rows.push({ Name: r.Name, Details: r.Details + ' <span class="badge">Mutant Lines</span>' }));
+    }
+
+    // Fill the global table and ensure it isn't filtered itself
+    window.tables.globalDT.clear().rows.add(rows).draw();
+    window.tables.globalDT.search('').draw();
+
+    // Show the combined results
+    showPanel('global');
+  } else {
+    // No search term -> return to the user's last tab
+    showPanel(lastActive);
+  }
 });
+
 // Load PapaParse and CSVs
 (function loadPapa(cb){
   const s = document.createElement('script');
