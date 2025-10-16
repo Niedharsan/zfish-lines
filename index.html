@@ -29,7 +29,6 @@
   .scroll-wrap { max-height: 70vh; }
   footer { color:#777; margin-top: 18px; font-size: 13px; }
 
-  /* Mobile responsiveness adjustments */
 @media screen and (max-width: 768px) {
   .wrap {
     padding: 10px 8px;
@@ -50,13 +49,12 @@
   }
 
   .scroll-wrap {
-  max-height: 60vh; /* Adjust as needed */
+  max-height: 60vh; 
   overflow-y: auto;
   transition: max-height 0.3s ease-in-out;
 }
   }
 
-  /* Make tables stack responsively */
   .dataTable {
     display: block;
     width: 100%;
@@ -72,7 +70,6 @@
   }
 }
 
-/* Small devices */
 @media screen and (max-width: 480px) {
   .tabs {
     flex-direction: column;
@@ -245,37 +242,34 @@ searchInput.addEventListener('input', (e) => {
 })(() => {
   Papa.parse('crisprs.csv', { download:true, header:true, skipEmptyLines:true, complete: (res)=>{
     window.tables.crisprDT = build2colTable('#crispr-table', toRows(res.data||[])); 
-    window.tables.crisprDT.responsive = true;  // Enable responsive feature
+    window.tables.crisprDT.responsive = true; 
     updateBadges();
   }});
   Papa.parse('transgenics.csv', { download:true, header:true, skipEmptyLines:true, complete: (res)=>{
     window.tables.tgDT = build2colTable('#tg-table', toRows(res.data||[])); 
-    window.tables.crisprDT.responsive = true;  // Enable responsive feature
+    window.tables.crisprDT.responsive = true;  
     updateBadges();
   }});
   Papa.parse('mutants.csv', { download:true, header:true, skipEmptyLines:true, complete: (res)=>{
     window.tables.mutantsDT = build2colTable('#mutants-table', toRows(res.data||[])); 
-    window.tables.crisprDT.responsive = true;  // Enable responsive feature
+    window.tables.crisprDT.responsive = true;  
     updateBadges();
   }});
 });
-  // Save search term on input change
 searchInput.addEventListener('input', (e) => {
   const term = e.target.value.trim();
-  localStorage.setItem('searchTerm', term);  // Store search term in local storage
-  updateSearch(term);  // Perform search on the table
+  localStorage.setItem('searchTerm', term);  
+  updateSearch(term);  
 });
 
-// On page load or resize, re-apply the last search term
 document.addEventListener('DOMContentLoaded', () => {
   const savedTerm = localStorage.getItem('searchTerm');
   if (savedTerm) {
-    searchInput.value = savedTerm;  // Set the search input value
-    updateSearch(savedTerm);  // Trigger search again
+    searchInput.value = savedTerm; 
+    updateSearch(savedTerm);  
   }
 });
 
-// Function to trigger search on DataTables
 function updateSearch(term) {
   const tableKeys = ['crisprDT', 'tgDT', 'mutantsDT'];
   tableKeys.forEach(k => { 
