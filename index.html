@@ -50,7 +50,10 @@
   }
 
   .scroll-wrap {
-    max-height: 60vh;
+  max-height: 60vh; /* Adjust as needed */
+  overflow-y: auto;
+  transition: max-height 0.3s ease-in-out;
+}
   }
 
   /* Make tables stack responsively */
@@ -256,6 +259,31 @@ searchInput.addEventListener('input', (e) => {
     updateBadges();
   }});
 });
+  // Save search term on input change
+searchInput.addEventListener('input', (e) => {
+  const term = e.target.value.trim();
+  localStorage.setItem('searchTerm', term);  // Store search term in local storage
+  updateSearch(term);  // Perform search on the table
+});
+
+// On page load or resize, re-apply the last search term
+document.addEventListener('DOMContentLoaded', () => {
+  const savedTerm = localStorage.getItem('searchTerm');
+  if (savedTerm) {
+    searchInput.value = savedTerm;  // Set the search input value
+    updateSearch(savedTerm);  // Trigger search again
+  }
+});
+
+// Function to trigger search on DataTables
+function updateSearch(term) {
+  const tableKeys = ['crisprDT', 'tgDT', 'mutantsDT'];
+  tableKeys.forEach(k => { 
+    const dt = window.tables[k];
+    if (dt) dt.search(term).draw();
+  });
+  updateBadges();
+}
 </script>
 </body>
 </html>
