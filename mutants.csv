@@ -1,6 +1,6 @@
 Line,Notes
 p62+/+ optn +/+,WT Controls
-p62-/- optn -/-,mutant genów p62 i optn koduj?cych bia?ka b?d?cymi receptorami selektywnej autofagii
+p62-/- optn -/-,mutant p62 and optn genes encoding proteins that are selective autophagy receptors
 Lgals8A,galectin 8a - 10bp deletion
 Lgals8B,galectin 8b - 13bp deletion
 Lgals3A,galectin 3a - 4bp insertion
@@ -17,3 +17,4 @@ CxCR1,"Construct consisting of: Cas9-2a-mCherry expressed in neutrophils (LyzC p
 CxCR2,"Construct consisting of: Cas9-2a-mCherry expressed in neutrophils (LyzC promoter). CRISPR targeting chemokine (C-X-C motif) receptor 2 (CXCR2) - expressed globally, driven by U6 promoter (rnu6-32). Heart muscle labeled with EGFP (CMLC2 - Cardiac Myosin Light Chain 2 promoter) for screening. Construct expressed in mpx:GFP line that label neutrophils with GFP."
 
 Rubicon,"mutant of the rubcn gene - encoding the Rubicon protein, which is involved in in the regulation of a non-canonical form of autophagy - LAP"
+
