@@ -62,7 +62,6 @@
     </div>
   </section>
 
-  <!-- Global results panel (auto-shown while searching) -->
   <section id="global" class="panel">
     <div class="scroll-wrap">
       <table id="global-table" class="display" style="width:100%"></table>
@@ -105,7 +104,6 @@ function build2colTable(sel, rows) {
   });
 }
 
-// --- GLOBAL SEARCH HELPERS ---
 window.tables = {};
 let lastActive = 'crisprs';
 
@@ -130,7 +128,6 @@ function showPanel(id) {
   relayout();
 }
 
-// Tabs: remember last active real tab
 document.querySelectorAll('.tabbtn').forEach(btn => {
   btn.addEventListener('click', () => {
     document.querySelectorAll('.tabbtn').forEach(b => b.classList.remove('active'));
@@ -141,13 +138,11 @@ document.querySelectorAll('.tabbtn').forEach(btn => {
   });
 });
 
-// Global search behavior
 const searchInput = document.getElementById('globalSearch');
 searchInput.addEventListener('input', (e) => {
   const term = e.target.value.trim();
   const tableKeys = ['crisprDT','tgDT','mutantsDT'];
 
-  // Apply the search to real tables so badges stay correct
   tableKeys.forEach(k => { const dt = window.tables[k]; if (dt) dt.search(term).draw(); });
   updateBadges();
 
@@ -168,19 +163,16 @@ searchInput.addEventListener('input', (e) => {
         .forEach(r => rows.push({ Name: r.Name, Details: r.Details + ' <span class="badge">Mutant Lines</span>' }));
     }
 
-    // Fill the global table and ensure it isn't filtered itself
     window.tables.globalDT.clear().rows.add(rows).draw();
     window.tables.globalDT.search('').draw();
 
-    // Show the combined results
     showPanel('global');
   } else {
-    // No search term -> return to the user's last tab
+    
     showPanel(lastActive);
   }
 });
 
-// Load PapaParse and CSVs
 (function loadPapa(cb){
   const s = document.createElement('script');
   s.src = 'https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js';
